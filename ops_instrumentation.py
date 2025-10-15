@@ -36,11 +36,12 @@ def attach_ops(app: FastAPI, ready_check: Optional[Callable[[], bool]] = None,
         resp.headers['X-Trace-Id']=_trace(request)
         resp.headers['X-Model-Version']=MODEL_VER
         return resp
-    @app.get('/health')
-    async def _health(): return {'ok': True, 'model': MODEL, 'model_version': MODEL_VER}
     @app.get('/ready')
     async def _ready(): return JSONResponse({'ready': True, 'started': STARTED}, status_code=200)
     @app.get('/meta')
     async def _meta(): return {'model': MODEL, 'model_version': MODEL_VER, 'git_sha': os.getenv('GIT_SHA','dev'), 'last_updated': STARTED}
     @app.get('/metrics')
     async def _metrics(): return PlainTextResponse(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+    @app.get("/health")
+    async def _health():
+        return {"ok": True, "model": MODEL, "model_version": MODEL_VER}
